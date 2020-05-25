@@ -8,8 +8,8 @@ import sys
 import re
 
 # Create general h5 for all data
-INPUT = "/home/franky8939/GITHUP/DarkSUSY.git/data/h5_muon/DarkSUSY.h5"
-OUTPUT = "/home/franky8939/GITHUP/DarkSUSY.git/data/h5_muon_histg/DarkSUSY_histg.h5"
+INPUT = "/home/franky8939/GITHUP/DarkSUSY-master/data/h5_muon/DarkSUSY.h5"
+OUTPUT = "/home/franky8939/GITHUP/DarkSUSY-master/data/h5_muon_histg/DarkSUSY_histg.h5"
 
 # Si existe el archivo OUTPUT ACTUALIZARLO #
 if os.path.exists(INPUT):
@@ -22,8 +22,8 @@ hf_out = h5py.File(OUTPUT, 'w')
 # code to find
 # var
 
-steps = 100
-div = 50
+steps = float(100)
+div = float(50)
 
 INPUT_PT_CMS = None
 OUTPUT_PT_CMS = None
@@ -67,19 +67,20 @@ size_IsolationVar_CMS = (range_IsolationVar_CMS[1] - range_IsolationVar_CMS[0]) 
 
 INPUT_MassInv_CMS_all = None
 OUTPUT_MassInv_CMS = None
-range_MassInv_CMS = [0, 15]
+range_MassInv_CMS = [-0.001, 15]
 size_MassInv_CMS = (range_MassInv_CMS[1] - range_MassInv_CMS[0]) / div
 
 INPUT_SumPt_CMS_all = None
 OUTPUT_SumPt_CMS = None
-range_SumPt_CMS = [0, 20]
+range_SumPt_CMS = [-0.001, 20]
 size_SumPt_CMS = (range_SumPt_CMS[1] - range_SumPt_CMS[0]) / div
 
 INPUT_SumPtNeutral_CMS_all = None
 OUTPUT_SumPtNeutral_CMS = None
-range_SumPtNeutral_CMS = [0, 20]
+range_SumPtNeutral_CMS = [-0.001, 20]
 size_SumPtNeutral_CMS = (range_SumPtNeutral_CMS[1] - range_SumPtNeutral_CMS[0]) / div
 
+print(float(size_T_CMS), float(size_SumPtNeutral_CMS), float(size_MassInv_CMS))
 
 # Funcion para generar histograma
 def histF(inp, sizes, steps, range):
@@ -89,20 +90,22 @@ def histF(inp, sizes, steps, range):
     outY = []
     N = len(inp[(inp < np.max(range)) * (inp > np.min(range))])
     for cen in cens:
-        if (cen + sizes) > np.max(range):
+        if (cen + sizes) >= np.max(range):
             sizeC = np.max(range) - cen
             log = (inp > (cen - sizes)) * ((cen + sizeC) > inp)
             val = inp[log]
             if N > 0:
+                # print(len(val), " ", N, " ", sizeC, "0")
                 outY.append(len(val) / (N * (sizes + sizeC)))
             else:
                 outY.append(0)
 
-        elif (cen - sizes) < np.min(range):
+        elif (cen - sizes) <= np.min(range):
             sizeC = cen - np.min(range)
             log = (inp < (cen + sizes)) * ((cen - sizeC) < inp)
             val = inp[log]
             if N > 0:
+                # print(len(val), " ", N, " ", sizeC, "1")
                 outY.append(len(val) / (N * (sizes + sizeC)))
             else:
                 outY.append(0)
@@ -111,6 +114,7 @@ def histF(inp, sizes, steps, range):
             log = (inp > (cen - sizes)) * ((cen + sizes) > inp)
             val = inp[log]
             if N > 0:
+                # print(len(val), " ", N, " ", sizes, "2")
                 outY.append(len(val) / (N * 2 * sizes))
             else:
                 outY.append(0)
@@ -122,7 +126,7 @@ def histF(inp, sizes, steps, range):
 
 
 # prueba
-for MNeuL in hf.keys():
+for MNeuL in hf.keys():  #["MNeuL_10"]
     # print(MNeuL)
     MNeuD_all = hf.require_group(MNeuL)
     for MNeuD in MNeuD_all.keys():

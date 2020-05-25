@@ -115,10 +115,10 @@ class DarkSUSY:
         return output
 
     def Mu_for_Event(self):
-        self.MuEvent = np.array([])
+        self.MuEvent = np.zeros(self.Entries)  # np.array([])
         for entry in range(self.Entries):
             self.File.GetEntry(entry)
-            self.MuEvent = np.append(self.MuEvent, self.File.Muon.GetEntries())
+            self.MuEvent[entry] = self.File.Muon.GetEntries()  # np.append(self.MuEvent, self.File.Muon.GetEntries())
         # print self.MuEvent
         return self.MuEvent
 
